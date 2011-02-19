@@ -96,6 +96,7 @@ int main(int argc, char* argv[])
 
     // 'fs' object
     Handle<FunctionTemplate> fsObject = FunctionTemplate::New();
+    fsObject->Set(String::New("pathSeparator"), String::New("/"), ReadOnly);
     fsObject->Set(String::New("exists"), FunctionTemplate::New(fs_exists)->GetFunction());
     fsObject->Set(String::New("makeDirectory"), FunctionTemplate::New(fs_makeDirectory)->GetFunction());
     fsObject->Set(String::New("isDirectory"), FunctionTemplate::New(fs_isDirectory)->GetFunction());
