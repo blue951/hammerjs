@@ -65,3 +65,4 @@ set_property(TARGET v8 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/lib/libv
 
 target_link_libraries(hammerjs v8 pthread)
 
+install(TARGETS hammerjs DESTINATION bin)
