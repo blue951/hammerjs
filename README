@@ -16,6 +16,10 @@ Build instructions for 32-bit system:
     cd ..
     cmake . && make
 
+Install it:
+
+    sudo make install
+
 API
 ===
 
@@ -188,3 +192,28 @@ syntax.js: Loads a script file and prints the syntax tree.
     }
     f.close();
   system.print(JSON.stringify(Reflect.parse(content), undefined, 4));
+
+
+Remote Debugging
+================
+
+Start from a clean source tree (e.g. run 'git clean -xfd').
+
+Compile V8 with debug mode (e.g. on 64-bit system):
+
+    svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
+    cd lib && scons mode=debug arch=x64
+    cd ..
+
+Compile HammerJS with the debug version of V8:
+
+    cmake -DEBUG=1 . && make
+
+Install it:
+
+    sudo make install
+
+Try it with the countdown timer:
+
+    hammerjs examples/countdown.js
+

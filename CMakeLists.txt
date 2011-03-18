@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 
 project(HammerJS)
 
-set(CMAKE_BUILD_TYPE "Release")
+if(${EBUG} EQUAL 1)
+    set(CMAKE_BUILD_TYPE "Debug")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DHAMMERJS_DEBUGGER")
+else()
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX )
    add_definitions(-Wall)

@@ -23,6 +23,10 @@
 
 #include <v8.h>
 
+#if defined(HAMMERJS_DEBUGGER)
+#include <v8-debug.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -87,6 +91,10 @@ int main(int argc, char* argv[])
     fread(buf, 1, len, f);
     buf[len - 1] = '\0';
     fclose(f);
+
+#if defined(HAMMERJS_DEBUGGER)
+    v8::Debug::EnableAgent(argv[1], 5858, true);
+#endif
 
     HandleScope handle_scope;
     Handle<ObjectTemplate> global = ObjectTemplate::New();
