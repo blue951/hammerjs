@@ -5,8 +5,10 @@ project(HammerJS)
 if(${EBUG} EQUAL 1)
     set(CMAKE_BUILD_TYPE "Debug")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DHAMMERJS_DEBUGGER")
+    set(LIBV8 ${PROJECT_SOURCE_DIR}/lib/libv8_g.a)
 else()
     set(CMAKE_BUILD_TYPE "Release")
+    set(LIBV8 ${PROJECT_SOURCE_DIR}/lib/libv8.a)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX )
@@ -66,7 +68,7 @@ link_directories(
 )
 
 add_library(v8 STATIC IMPORTED)
-set_property(TARGET v8 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/lib/libv8.a)
+set_property(TARGET v8 PROPERTY IMPORTED_LOCATION ${LIBV8})
 
 target_link_libraries(hammerjs v8 pthread)
 
