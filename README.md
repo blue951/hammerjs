@@ -29,6 +29,27 @@ HammerJS has a rich set of API to do file I/O, system access, and syntax parsing
 
     sudo make install
 
+# Quick Start
+
+The typical usage is:
+
+    hammerjs script.js foo bar baz
+
+where <code>script.js</code> will be executed by HammerJS. The three arguments (foo, bar, baz) will be available from the script.
+
+Pretty much standard JavaScript code will run with HammerJS. Since it is pure JavaScript interpreter, obviously it does not have support for DOM objects.
+
+Here is the simplest HammerJS script, <code>hello.js</code>:
+
+    system.print('Hello','world!');
+    system.exit();
+
+which can be executed by running
+
+    hammerjs hello.js
+
+For more examples, see the Examples section below.
+
 # API
 
 There are few objects at the global scope: 'system', 'fs', and 'Reflect'.
