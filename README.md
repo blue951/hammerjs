@@ -1,41 +1,55 @@
-Requirements:
-    CMake 2.6 or later
-    scons 1.2 or later
+HammerJS is a powerful JavaScript shell. It uses [V8](http://v8.googlecode.com), the fast JavaScript engine for Google Chrome, as the back-end.
 
-Build instructions for 64-bit system:
+HammerJS has a rich set of API to do file I/O, system access, and syntax parsing.
+
+**Warning**: HammerJS is still in the development so the API is not final and might change at any time.
+
+# Build steps
+
+### Requirements
+
+* [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html)
+* [scons 1.2 or later](http://www.scons.org/download.php)
+
+### Build instructions for 64-bit system:
 
     svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
     cd lib && scons mode=release arch=x64
     cd ..
     cmake . && make
 
-Build instructions for 32-bit system:
+### Build instructions for 32-bit system:
 
     svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
     cd lib && scons mode=release
     cd ..
     cmake . && make
 
-Install it:
+### Installation
 
     sudo make install
 
-API
-===
+# API
 
 There are few objects at the global scope: 'system', 'fs', and 'Reflect'.
+
+## system
 
 'system' object has the following functions:
 
 * print(obj, ...) displays obj as a string to the console output.
   It is possible to print several objects separated by comma,
   the output will be separated by white space.
-  Example:
+
+Example:
+
       system.print('Hello', 'world');
 
 * exit(status) terminates the application and returns the status.
   If status is not specified, 0 is returned instead.
-  Example:
+
+Example:
+
       if (error)
           system.exit(1);
       else
@@ -55,7 +69,9 @@ There are few objects at the global scope: 'system', 'fs', and 'Reflect'.
 
 * exists(path) returns true if the specified path exists, otherwise
   returns false.
-  Example:
+
+Example:
+
       if (fs.exists('/etc/passwd')) {
           system.print('You have passwd file');
       }
@@ -79,20 +95,27 @@ There are few objects at the global scope: 'system', 'fs', and 'Reflect'.
 
 * workingDirectory() returns the current working directory.
 
+## fs
+
 'fs' object has the following property:
 
 * pathSeparator (read-only), a single-character that denotes the separator
   for the path name.
+
+## Reflect
 
 'Reflect' object has the following functions:
 
 * parse(code) returns JSON-formatted syntax tree corresponding to the code.
   See https://wiki.mozilla.org/JavaScript:SpiderMonkey:Parser_API for the
   details of the syntax tree structure.
-  Example:
+
+Example:
+
       Reflect.parse("var answer = 42;");
 
-  will give the following output:
+will give the following output:
+
     {
         "type": "Program",
         "body": [
@@ -116,6 +139,8 @@ There are few objects at the global scope: 'system', 'fs', and 'Reflect'.
         ]
     }
 
+## Stream
+
 Stream is created using fs.open(path). It has the following functions:
 
 * close() flushes pending buffer and closes the stream. Further operation
@@ -133,17 +158,16 @@ Stream is created using fs.open(path). It has the following functions:
 
 * writeLine() writes a string to the stream and then appends '\n'.
 
-Examples
-========
+# Examples
 
-All the example scripts below are available in the examples/ directory.
+All the example scripts below are available in the <code>examples/</code> directory.
 
-hello.js: Shows a simple text message.
+<code>hello.js</code>: Shows a simple text message.
 
     system.print('Hello','world!');
     system.exit();
 
-args.js: Displays all the arguments passed to the script.
+<code>args.js</code>: Displays all the arguments passed to the script.
 
     if (system.args.length === 1) {
         system.print('Try to pass some args when invoking this script!');
@@ -160,7 +184,7 @@ args.js: Displays all the arguments passed to the script.
     1: Foo
     2: Bar
 
-scandir.js: Recursively traverses directory and prints all found *.js files.
+<code>scandir.js</code>: Recursively traverses directory and prints all found *.js files.
 
     if (system.args.length !== 2) {
         system.exit(-1);
@@ -176,7 +200,7 @@ scandir.js: Recursively traverses directory and prints all found *.js files.
     };
     scanDirectory(system.args[1]);
 
-syntax.js: Loads a script file and prints the syntax tree.
+<code>syntax.js</code>: Loads a script file and prints the syntax tree.
 
     var f, line, content = '';
     if (system.args.length !== 2) {
@@ -191,13 +215,12 @@ syntax.js: Loads a script file and prints the syntax tree.
         content += line;
     }
     f.close();
-  system.print(JSON.stringify(Reflect.parse(content), undefined, 4));
+    system.print(JSON.stringify(Reflect.parse(content), undefined, 4));
 
 
-Remote Debugging
-================
+# Debugging
 
-Start from a clean source tree (e.g. run 'git clean -xfd').
+Start from a clean source tree (e.g. run <code>git clean -xfd</code> if necessary).
 
 Compile V8 with debug mode (e.g. on 64-bit system):
 
@@ -205,7 +228,7 @@ Compile V8 with debug mode (e.g. on 64-bit system):
     cd lib && scons mode=debug arch=x64
     cd ..
 
-Compile HammerJS with the debug version of V8:
+Rebuild HammerJS with the debug version of V8:
 
     cmake -DEBUG=1 . && make
 
