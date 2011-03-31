@@ -4,30 +4,51 @@ HammerJS has a rich set of API to do file I/O, system access, and syntax parsing
 
 **Warning**: HammerJS is still in the development so the API is not final and might change at any time.
 
-# Build steps
+# Build instructions
 
-### Requirements
+## Mac OS X
+
+Ensure that the development tools are ready to use, i.e. by installing [Xcode 3.2 or later](http://developer.apple.com/tools/xcode/).
+
+Additional requirements (just install the binary package):
 
 * [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html)
 * [scons 1.2 or later](http://www.scons.org/download.php)
 
-### Build instructions for 64-bit system:
+Run the following:
 
     svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
     cd lib && scons mode=release arch=x64
     cd ..
     cmake . && make
 
-### Build instructions for 32-bit system:
+Installation step (requires Administrative password):
+
+    sudo make install
+
+## Linux
+
+Ensure that the development tools are ready to use, as well as:
+
+* [Subversion 1.6 or later](http://subversion.tigris.org)
+* [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html)
+* [scons 1.2 or later](http://www.scons.org/download.php)
+
+On Kubuntu or Ubuntu, these requirements can be fulfilled by running:
+
+    sudo apt-get install build-essential subversion cmake scons
+
+Run the following:
 
     svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
     cd lib && scons mode=release
     cd ..
     cmake . && make
 
-### Installation
+Installation step (requires root password):
 
     sudo make install
+
 
 # Quick Start
 
