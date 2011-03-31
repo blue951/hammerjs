@@ -23,6 +23,10 @@
 
 #include <v8.h>
 
+#if defined(WIN32) || defined(_WIN32)
+#define HAMMERJS_OS_WINDOWS
+#endif
+
 #if defined(HAMMERJS_DEBUGGER)
 #include <v8-debug.h>
 #endif
@@ -43,6 +47,12 @@
 #include <JSGlobalData.h>
 #include <SourceCode.h>
 #include <UString.h>
+
+#if defined(HAMMERJS_OS_WINDOWS)
+#if !defined(PATH_MAX)
+#define PATH_MAX 260
+#endif
+#endif
 
 using namespace v8;
 
@@ -196,6 +206,9 @@ static Handle<Value> fs_isFile(const Arguments& args)
 
 static Handle<Value> fs_makeDirectory(const Arguments& args)
 {
+#if defined(HAMMERJS_OS_WINDOWS)
+    return ThrowException(String::New("Exception: fs.makeDirectory() is not supported yet on Windows"));
+#else
     HandleScope handle_scope;
 
     if (args.Length() != 1)
@@ -207,10 +220,14 @@ static Handle<Value> fs_makeDirectory(const Arguments& args)
         return Undefined();
 
     return ThrowException(String::New("Exception: fs.makeDirectory() can't create the directory"));
+#endif
 }
 
 static Handle<Value> fs_list(const Arguments& args)
 {
+#if defined(HAMMERJS_OS_WINDOWS)
+    return ThrowException(String::New("Exception: fs.list() is not supported yet on Windows"));
+#else
     HandleScope handle_scope;
 
     if (args.Length() != 1)
@@ -235,6 +252,7 @@ static Handle<Value> fs_list(const Arguments& args)
     ::closedir(dir);
 
     return entries;
+#endif
 }
 
 static Handle<Value> fs_open(const Arguments& args)
