@@ -72,4 +72,8 @@ set_property(TARGET v8 PROPERTY IMPORTED_LOCATION ${LIBV8})
 
 target_link_libraries(hammerjs v8 pthread)
 
+if(WIN32)
+    target_link_libraries(hammerjs ws2_32 winmm)
+endif()
+
 install(TARGETS hammerjs DESTINATION bin)
