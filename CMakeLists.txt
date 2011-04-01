@@ -5,10 +5,10 @@ project(HammerJS)
 if(${EBUG} EQUAL 1)
     set(CMAKE_BUILD_TYPE "Debug")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DHAMMERJS_DEBUGGER")
-    set(LIBV8 ${PROJECT_SOURCE_DIR}/lib/libv8_g.a)
+    set(LIBV8 ${PROJECT_SOURCE_DIR}/v8/libv8_g.a)
 else()
     set(CMAKE_BUILD_TYPE "Release")
-    set(LIBV8 ${PROJECT_SOURCE_DIR}/lib/libv8.a)
+    set(LIBV8 ${PROJECT_SOURCE_DIR}/v8/libv8.a)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX )
@@ -58,13 +58,13 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/parser
     ${PROJECT_SOURCE_DIR}/runtime
     ${PROJECT_SOURCE_DIR}/wtf
-    ${PROJECT_SOURCE_DIR}/lib/include
+    ${PROJECT_SOURCE_DIR}/v8/include
 )
 
 add_executable(hammerjs ${HammerJS_SOURCES})
 
 link_directories(
-    ${PROJECT_SOURCE_DIR}/lib
+    ${PROJECT_SOURCE_DIR}/v8
 )
 
 add_library(v8 STATIC IMPORTED)
