@@ -89,7 +89,7 @@ set(V8_SOURCES
 set(V8_SOURCES ${V8_SOURCES} generated/snapshot.cc)
 set(V8_SOURCES ${V8_SOURCES} generated/libraries.cc)
 
-# FIXME: this should 64-bit architecture instead
+# FIXME: this should 64-bit vs 32-bit architecture instead
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-m64 -DV8_TARGET_ARCH_X64)
     set(V8_SOURCES ${V8_SOURCES}
@@ -112,13 +112,35 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         src/x64/stub-cache-x64.cc
         src/x64/virtual-frame-x64.cc
     )
+else()
+    set(V8_SOURCES ${V8_SOURCES}
+        src/jump-target-heavy.cc
+        src/virtual-frame-heavy.cc
+        src/ia32/assembler-ia32.cc
+        src/ia32/builtins-ia32.cc
+        src/ia32/code-stubs-ia32.cc
+        src/ia32/codegen-ia32.cc
+        src/ia32/cpu-ia32.cc
+        src/ia32/debug-ia32.cc
+        src/ia32/disasm-ia32.cc
+        src/ia32/frames-ia32.cc
+        src/ia32/full-codegen-ia32.cc
+        src/ia32/ic-ia32.cc
+        src/ia32/jump-target-ia32.cc
+        src/ia32/macro-assembler-ia32.cc
+        src/ia32/regexp-macro-assembler-ia32.cc
+        src/ia32/register-allocator-ia32.cc
+        src/ia32/stub-cache-ia32.cc
+        src/ia32/virtual-frame-ia32.cc
+    )
 endif()
 
-include_directories(src src/x64)
+include_directories(src src/ia32 src/x64)
 
-add_definitions(-Werror -Wno-uninitialized -O3 -fomit-frame-pointer
-    -fdata-sections -ffunction-sections -ansi -DENABLE_VMSTATE_TRACKING
-    -DENABLE_LOGGING_AND_PROFILING -DENABLE_DEBUGGER_SUPPORT)
+add_definitions(-DENABLE_VMSTATE_TRACKING)
+add_definitions(-DENABLE_LOGGING_AND_PROFILING)
+add_definitions(-DENABLE_DEBUGGER_SUPPORT)
+
 
 # platform-specific file
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -127,10 +149,19 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         src/platform-posix.cc
     )
     add_definitions(-mmacosx-version-min=10.4)
+    add_definitions(-ansi)
+endif()
+
+if(WIN32)
+    add_definitions(-DWIN32)
+    set(V8_SOURCES ${V8_SOURCES}
+        src/platform-win32.cc
+    )
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-   add_definitions(-Wall)
+    add_definitions(-Wall)
+    add_definitions(-Wno-uninitialized -O3 -fomit-frame-pointer -fdata-sections -ffunction-sections)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 add_library(v8 STATIC ${V8_SOURCES})
