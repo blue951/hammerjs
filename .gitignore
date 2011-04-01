@@ -1,0 +1,14 @@
+*~
+*.a
+*.la
+*.core
+*.o
+*.orig
+*.swp
+*.rej
+*.so
+core
+.DS_Store
+*.debug
+.*.swp
+.svn
