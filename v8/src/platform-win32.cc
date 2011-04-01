@@ -207,6 +207,11 @@ int strncpy_s(char* strDest, size_t numberOfElements,
   return 0;
 }
 
+inline void MemoryBarrier() {
+  int barrier = 0;
+  __asm__ __volatile__("xchgl %%eax,%0 ":"=r" (barrier));
+}
+
 #endif  // __MINGW32__
 
 // Generate a pseudo-random number in the range 0-2^31-1. Usually
