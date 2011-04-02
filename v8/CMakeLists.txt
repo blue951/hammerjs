@@ -91,7 +91,7 @@ set(V8_SOURCES ${V8_SOURCES} generated/libraries.cc)
 
 # FIXME: this should 64-bit vs 32-bit architecture instead
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    add_definitions(-m64 -DV8_TARGET_ARCH_X64)
+    add_definitions(-DV8_TARGET_ARCH_X64)
     set(V8_SOURCES ${V8_SOURCES}
         src/jump-target-heavy.cc
         src/virtual-frame-heavy.cc
@@ -113,7 +113,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         src/x64/virtual-frame-x64.cc
     )
 else()
-    add_definitions(-m32 -DV8_TARGET_ARCH_IA32)
+    add_definitions(-DV8_TARGET_ARCH_IA32)
     set(V8_SOURCES ${V8_SOURCES}
         src/jump-target-heavy.cc
         src/virtual-frame-heavy.cc
@@ -174,3 +174,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 add_library(v8 STATIC ${V8_SOURCES})
+
+# FIXME: this should 64-bit vs 32-bit architecture instead
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m64" LINK_FLAGS "-m64")
+else()
+    set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+endif()

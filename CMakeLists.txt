@@ -65,6 +65,13 @@ include_directories(
 
 add_executable(hammerjs ${HammerJS_SOURCES})
 
+# FIXME: this should 64-bit vs 32-bit architecture instead
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m64" LINK_FLAGS "-m64")
+else()
+    set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+endif()
+
 link_directories(${PROJECT_SOURCE_DIR}/v8)
 target_link_libraries(hammerjs v8 pthread)
 
