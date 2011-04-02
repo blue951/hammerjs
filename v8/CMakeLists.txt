@@ -113,6 +113,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         src/x64/virtual-frame-x64.cc
     )
 else()
+    add_definitions(-m32 -DV8_TARGET_ARCH_IA32)
     set(V8_SOURCES ${V8_SOURCES}
         src/jump-target-heavy.cc
         src/virtual-frame-heavy.cc
