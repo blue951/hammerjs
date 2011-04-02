@@ -54,8 +54,6 @@ Contributed patches to support Visual C++ are welcomed.
 
 Additional requirement is [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html) (use the binary MSI) as the build tool.
 
-**Warning**: This is highly experimental, the resulting executable usually crashes easily.
-
 In the command prompt, run the following:
 
     cmake -G "MinGW Makefiles" .
