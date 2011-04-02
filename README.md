@@ -10,17 +10,12 @@ HammerJS has a rich set of API to do file I/O, system access, and syntax parsing
 
 Ensure that the development tools are ready to use, i.e. by installing [Xcode 3.2 or later](http://developer.apple.com/tools/xcode/).
 
-Additional requirements (just install the binary package):
-
-* [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html)
-* [scons 1.2 or later](http://www.scons.org/download.php)
+Additional requirement is [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html) (just install the binary package). This is needed as the build tool.
 
 Run the following:
 
-    svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
-    cd lib && scons mode=release arch=x64
-    cd ..
-    cmake . && make
+    cmake .
+    make
 
 Installation step (requires Administrative password):
 
@@ -28,27 +23,20 @@ Installation step (requires Administrative password):
 
 ## Linux
 
-Ensure that the development tools are ready to use, as well as:
-
-* [Subversion 1.6 or later](http://subversion.tigris.org)
-* [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html)
-* [scons 1.2 or later](http://www.scons.org/download.php)
+Ensure that the development tools are ready to use, as well as [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html).
 
 On Kubuntu or Ubuntu, these requirements can be fulfilled by running:
 
-    sudo apt-get install build-essential subversion cmake scons
+    sudo apt-get install build-essential cmake
 
 Run the following:
 
-    svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
-    cd lib && scons mode=release
-    cd ..
-    cmake . && make
+    cmake .
+    make
 
 Installation step (requires root password):
 
     sudo make install
-
 
 # Quick Start
 
