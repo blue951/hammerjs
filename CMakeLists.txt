@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.6)
 
 project(HammerJS)
 
+add_subdirectory(v8)
+
 if(${EBUG} EQUAL 1)
     set(CMAKE_BUILD_TYPE "Debug")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DHAMMERJS_DEBUGGER")
@@ -63,13 +65,7 @@ include_directories(
 
 add_executable(hammerjs ${HammerJS_SOURCES})
 
-link_directories(
-    ${PROJECT_SOURCE_DIR}/v8
-)
-
-add_library(v8 STATIC IMPORTED)
-set_property(TARGET v8 PROPERTY IMPORTED_LOCATION ${LIBV8})
-
+link_directories(${PROJECT_SOURCE_DIR}/v8)
 target_link_libraries(hammerjs v8 pthread)
 
 if(WIN32)
