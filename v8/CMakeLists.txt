@@ -1,3 +1,5 @@
+include_directories(src)
+
 set(V8_SOURCES
     src/dtoa-config.c
     src/accessors.cc
@@ -92,6 +94,7 @@ set(V8_SOURCES ${V8_SOURCES} generated/libraries.cc)
 # FIXME: this should 64-bit vs 32-bit architecture instead
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-DV8_TARGET_ARCH_X64)
+    include_directories(src/x64)
     set(V8_SOURCES ${V8_SOURCES}
         src/jump-target-heavy.cc
         src/virtual-frame-heavy.cc
@@ -114,6 +117,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     )
 else()
     add_definitions(-DV8_TARGET_ARCH_IA32)
+    include_directories(src/x32)
     set(V8_SOURCES ${V8_SOURCES}
         src/jump-target-heavy.cc
         src/virtual-frame-heavy.cc
@@ -135,8 +139,6 @@ else()
         src/ia32/virtual-frame-ia32.cc
     )
 endif()
-
-include_directories(src src/ia32 src/x64)
 
 add_definitions(-DENABLE_VMSTATE_TRACKING)
 add_definitions(-DENABLE_LOGGING_AND_PROFILING)
