@@ -157,7 +157,7 @@ Example:
 'Reflect' object has the following functions:
 
 * parse(code) returns JSON-formatted syntax tree corresponding to the code.
-  See https://wiki.mozilla.org/JavaScript:SpiderMonkey:Parser_API for the
+  See [SpiderMonkey Parser API](https://wiki.mozilla.org/JavaScript:SpiderMonkey:Parser_API) for the
   details of the syntax tree structure.
 
 Example:
