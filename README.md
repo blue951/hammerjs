@@ -262,26 +262,3 @@ All the example scripts below are available in the <code>examples/</code> direct
     f.close();
     system.print(JSON.stringify(Reflect.parse(content), undefined, 4));
 
-
-# Debugging
-
-Start from a clean source tree (e.g. run <code>git clean -xfd</code> if necessary).
-
-Compile V8 with debug mode (e.g. on 64-bit system):
-
-    svn checkout -r 5610 http://v8.googlecode.com/svn/trunk lib
-    cd lib && scons mode=debug arch=x64
-    cd ..
-
-Rebuild HammerJS with the debug version of V8:
-
-    cmake -DEBUG=1 . && make
-
-Install it:
-
-    sudo make install
-
-Try it with the countdown timer:
-
-    hammerjs examples/countdown.js
-
