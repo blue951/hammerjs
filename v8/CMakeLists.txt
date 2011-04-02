@@ -143,11 +143,17 @@ add_definitions(-DENABLE_DEBUGGER_SUPPORT)
 
 
 # platform-specific file
+if(UNIX)
+    set(V8_SOURCES ${V8_SOURCES} src/platform-posix.cc)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(V8_SOURCES ${V8_SOURCES} src/platform-linux.cc)
+    add_definitions(-ansi)
+endif()
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(V8_SOURCES ${V8_SOURCES}
-        src/platform-macos.cc
-        src/platform-posix.cc
-    )
+    set(V8_SOURCES ${V8_SOURCES} src/platform-macos.cc)
     add_definitions(-mmacosx-version-min=10.4)
     add_definitions(-ansi)
 endif()
