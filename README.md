@@ -115,6 +115,8 @@ Example:
   invoking the script. The first string, i.e. args[0], is always the
   name of the script. See the example/args.js for details.
 
+## fs
+
 'fs' object has the following functions:
 
 * exists(path) returns true if the specified path exists, otherwise
@@ -144,8 +146,6 @@ Example:
   if mode is 'w'. If the file can not be opened, an exception is thrown.
 
 * workingDirectory() returns the current working directory.
-
-## fs
 
 'fs' object has the following property:
 
