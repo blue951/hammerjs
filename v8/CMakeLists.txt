@@ -67,6 +67,7 @@ set(V8_SOURCES
     src/scopes.cc
     src/serialize.cc
     src/snapshot-common.cc
+    src/snapshot-empty.cc
     src/spaces.cc
     src/string-search.cc
     src/string-stream.cc
@@ -88,7 +89,6 @@ set(V8_SOURCES
 )
 
 # generated
-set(V8_SOURCES ${V8_SOURCES} generated/snapshot.cc)
 set(V8_SOURCES ${V8_SOURCES} generated/libraries.cc)
 
 # FIXME: this should 64-bit vs 32-bit architecture instead
