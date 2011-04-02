@@ -6,6 +6,11 @@ HammerJS has a rich set of API to do file I/O, system access, and syntax parsing
 
 # Build instructions
 
+**Tip**: If you are on a multicore system (like any modern computer
+these days), you can speed up the build by passing an extra argument to the
+make command, e.g. <code>make -j4</code> (where 4 denotes the number of
+simultaneous compiles at the same time).
+
 ## Mac OS X
 
 Ensure that the development tools are ready to use, i.e. by installing [Xcode 3.2 or later](http://developer.apple.com/tools/xcode/).
