@@ -114,7 +114,11 @@ int main(int argc, char* argv[])
 
     // 'fs' object
     Handle<FunctionTemplate> fsObject = FunctionTemplate::New();
+#if defined(HAMMERJS_OS_WINDOWS)
+    fsObject->Set(String::New("pathSeparator"), String::New("\\"), ReadOnly);
+#else
     fsObject->Set(String::New("pathSeparator"), String::New("/"), ReadOnly);
+#endif
     fsObject->Set(String::New("exists"), FunctionTemplate::New(fs_exists)->GetFunction());
     fsObject->Set(String::New("makeDirectory"), FunctionTemplate::New(fs_makeDirectory)->GetFunction());
     fsObject->Set(String::New("isDirectory"), FunctionTemplate::New(fs_isDirectory)->GetFunction());
