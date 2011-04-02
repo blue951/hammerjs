@@ -168,6 +168,8 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-Wall)
+    add_definitions(-fno-rtti -fno-exceptions)
+    add_definitions(-fvisibility=hidden)
     add_definitions(-Wno-uninitialized -O3 -fomit-frame-pointer -fdata-sections -ffunction-sections)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
