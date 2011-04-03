@@ -77,6 +77,10 @@ target_link_libraries(hammerjs v8 pthread)
 
 if(WIN32)
     target_link_libraries(hammerjs ws2_32 winmm)
+    if(MINGW)
+        set_target_properties(hammerjs PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
+    endif()
 endif()
+
 
 install(TARGETS hammerjs DESTINATION bin)
