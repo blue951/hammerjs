@@ -73,7 +73,11 @@ else()
 endif()
 
 link_directories(${PROJECT_SOURCE_DIR}/v8)
-target_link_libraries(hammerjs v8 pthread)
+target_link_libraries(hammerjs v8)
+
+if(UNIX)
+    target_link_libraries(hammerjs pthread)
+endif()
 
 if(WIN32)
     target_link_libraries(hammerjs ws2_32 winmm)
