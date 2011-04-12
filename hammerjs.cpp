@@ -157,7 +157,10 @@ int main(int argc, char* argv[])
     context->Global()->Set(String::New("Stream"), streamClass->GetFunction(), PropertyAttribute(ReadOnly | DontDelete));
 
     Handle<Script> script = Script::Compile(String::New(buf));
-    script->Run();
+    if (script.IsEmpty())
+        std::cerr << "Error: unable to run " << argv[1] << std::endl;
+    else
+        script->Run();
 
     delete [] buf;
     return 0;
