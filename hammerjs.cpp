@@ -51,7 +51,7 @@
 #if defined(HAMMERJS_OS_WINDOWS)
 #include <windows.h>
 #if !defined(PATH_MAX)
-#define PATH_MAX 260
+#define PATH_MAX MAX_PATH
 #endif
 #endif
 
@@ -324,7 +324,7 @@ static Handle<Value> fs_workingDirectory(const Arguments& args)
     currentName[0] = 0;
 #if defined(HAMMERJS_OS_WINDOWS)
     DWORD len = ::GetCurrentDirectory(PATH_MAX, currentName);
-    if (len == 0 || len > MAX_PATH)
+    if (len == 0 || len > PATH_MAX)
         return ThrowException(String::New("Exception: function fs.workingDirectory() can not get current directory"));
     return String::New(currentName);
 #else
