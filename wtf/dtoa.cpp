@@ -2274,12 +2274,21 @@ static ALWAYS_INLINE void append(char*& next, const char* src, unsigned size)
         *next++ = *src++;
 }
 
+int isnan(double x)
+{
+#if COMPILER(MSVC)
+    return _isnan(x);
+#else
+    return std::isnan(x);
+#endif
+}
+
 void doubleToStringInJavaScriptFormat(double d, DtoaBuffer buffer, unsigned* resultLength)
 {
     ASSERT(buffer);
 
     // avoid ever printing -NaN, in JS conceptually there is only one NaN value
-    if (std::isnan(d)) {
+    if (isnan(d)) {
         append(buffer, "NaN", 3);
         if (resultLength)
             *resultLength = 3;
