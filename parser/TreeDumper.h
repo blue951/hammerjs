@@ -30,6 +30,10 @@
 
 #include <SyntaxTree.h>
 
+#if !defined(PATH_MAX)
+#define PATH_MAX 260
+#endif
+
 #include <limits.h>
 
 namespace JSC {
