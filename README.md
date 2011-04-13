@@ -231,6 +231,7 @@ All the example scripts below are available in the <code>examples/</code> direct
     system.exit();
 
   Example output:
+
     > hammerjs args.js Foo Bar
     0: args.js
     1: Foo
