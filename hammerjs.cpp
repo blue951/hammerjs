@@ -257,9 +257,6 @@ static Handle<Value> fs_makeDirectory(const Arguments& args)
 
 static Handle<Value> fs_list(const Arguments& args)
 {
-#if defined(HAMMERJS_OS_WINDOWS)
-    return ThrowException(String::New("Exception: fs.list() is not supported yet on Windows"));
-#else
     HandleScope handle_scope;
 
     if (args.Length() != 1)
@@ -267,6 +264,27 @@ static Handle<Value> fs_list(const Arguments& args)
 
     String::Utf8Value dirname(args[0]);
 
+#if defined(HAMMERJS_OS_WINDOWS)
+    char *search = new char[dirname.length() + 3];
+    strcpy(search, *dirname);
+    strcat(search, "\\*");
+    WIN32_FIND_DATA entry;
+    HANDLE dir = INVALID_HANDLE_VALUE;
+    dir = FindFirstFile(search, &entry);
+    if (dir == INVALID_HANDLE_VALUE)
+        return ThrowException(String::New("Exception: fs.list() can't access the directory"));
+
+    Handle<Array> entries = Array::New();
+    int count = 0;
+    do {
+        if (strcmp(entry.cFileName, ".") && strcmp(entry.cFileName, "..")) {
+            entries->Set(count++, String::New(entry.cFileName));
+        }
+    } while (FindNextFile(dir, &entry) != 0);
+    FindClose(dir);
+
+    return entries;
+#else
     DIR *dir = opendir(*dirname);
     if (!dir)
         return ThrowException(String::New("Exception: fs.list() can't access the directory"));
