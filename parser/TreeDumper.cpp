@@ -96,7 +96,7 @@ void JSONTreeDumper::finish()
 {
     fclose(buffer);
 
-    buffer  = fopen(fileName, "rt");
+    buffer  = fopen(fileName, "rb");
     fseek(buffer, 0, SEEK_END);
     int len = ftell(buffer);
     rewind(buffer);

@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    FILE* f = fopen(argv[1], "r");
+    FILE* f = fopen(argv[1], "rb");
     if (!f) {
         std::cerr << "Error: unable to open file " << argv[1] << std::endl;
         return 0;
