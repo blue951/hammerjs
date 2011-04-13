@@ -189,11 +189,19 @@ static Handle<Value> fs_isDirectory(const Arguments& args)
 
     String::Utf8Value name(args[0]);
 
+#if defined(HAMMERJS_OS_WINDOWS)
+    WIN32_FILE_ATTRIBUTE_DATA attr;
+    if (!::GetFileAttributesEx(*name, GetFileExInfoStandard, &attr))
+        return ThrowException(String::New("Exception: fs.isDirectory() can't access the directory"));
+
+    return Boolean::New((attr.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
+#else
     struct stat statbuf;
     if (::stat(*name, &statbuf))
         return ThrowException(String::New("Exception: fs.isDirectory() can't access the directory"));
 
     return Boolean::New(S_ISDIR(statbuf.st_mode));
+#endif
 }
 
 static Handle<Value> fs_isFile(const Arguments& args)
