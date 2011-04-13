@@ -177,7 +177,7 @@ static Handle<Value> fs_exists(const Arguments& args)
 
 #if defined(HAMMERJS_OS_WINDOWS)
     WIN32_FILE_ATTRIBUTE_DATA attr;
-    bool canStat = ::GetFileAttributesEx(*name, GetFileExInfoStandard, &attr)) != 0;
+    bool canStat = ::GetFileAttributesEx(*fileName, GetFileExInfoStandard, &attr) != 0;
 #else
     struct stat statbuf;
     bool canStat = ::stat(*fileName, &statbuf) == 0;
