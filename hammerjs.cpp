@@ -41,6 +41,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include <JSGlobalData.h>
 #include <SourceCode.h>
