@@ -49,16 +49,26 @@ Installation step (requires root password):
 
 ## Windows
 
-Note: Currently only [MinGW](http://www.mingw.org) is supported.
-Contributed patches to support Visual C++ are welcomed.
+Requirement: [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html) (install the binary MSI) as the build tool.
 
-Additional requirement is [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html) (use the binary MSI) as the build tool.
+### MinGW
+
+Tested with [MinGW](http://www.mingw.org) with GCC version 4.5.
 
 In the command prompt, run the following:
 
     cmake -G "MinGW Makefiles" .
     mingw32-make
 
+### Visual C++
+
+Tested with [Visual Studio/C++ 2010 Express](http://www.microsoft.com/express/Windows/).
+
+In the command prompt, run the following:
+
+    cmake -G "Visual Studio 10" .
+
+Launch Visual Studio and open the solution file <code>HammerJS.sln</code>. Press F7 to build.
 
 # Quick Start
 
