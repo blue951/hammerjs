@@ -237,9 +237,6 @@ static Handle<Value> fs_isFile(const Arguments& args)
 
 static Handle<Value> fs_makeDirectory(const Arguments& args)
 {
-#if defined(HAMMERJS_OS_WINDOWS)
-    return ThrowException(String::New("Exception: fs.makeDirectory() is not supported yet on Windows"));
-#else
     HandleScope handle_scope;
 
     if (args.Length() != 1)
@@ -247,11 +244,15 @@ static Handle<Value> fs_makeDirectory(const Arguments& args)
 
     String::Utf8Value directoryName(args[0]);
 
-    if (::mkdir(*directoryName, 0777) == 0)
-        return Undefined();
-
-    return ThrowException(String::New("Exception: fs.makeDirectory() can't create the directory"));
+#if defined(HAMMERJS_OS_WINDOWS)
+    if (::CreateDirectory(*directoryName, NULL) == 0)
+        return ThrowException(String::New("Exception: fs.makeDirectory() can't create the directory"));
+#else
+    if (::mkdir(*directoryName, 0777) != 0)
+        return ThrowException(String::New("Exception: fs.makeDirectory() can't create the directory"));
 #endif
+
+    return Undefined();
 }
 
 static Handle<Value> fs_list(const Arguments& args)
