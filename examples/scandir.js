@@ -7,7 +7,7 @@ var scanDirectory = function (path) {
         system.print(path);
     } else if (fs.isDirectory(path)) {
         fs.list(path).forEach(function (e) {
-            scanDirectory(path + '/' + e);
+            scanDirectory(path + fs.pathSeparator + e);
         });
     }
 };

@@ -5742,7 +5742,7 @@ var scanDirectory = function (path) {
         entries.push(path);
     } else if (fs.isDirectory(path)) {
         fs.list(path).forEach(function (e) {
-            subdirs = scanDirectory(path + '/' + e);
+            subdirs = scanDirectory(path + fs.pathSeparator + e);
             subdirs.forEach(function (s) {
                 entries.push(s);
             });
