@@ -34,7 +34,7 @@ On Kubuntu or Ubuntu, these requirements can be fulfilled by running:
 
     sudo apt-get install build-essential cmake
 
-On OpenUSE, use the installation step:
+On OpenSUSE, these requirements can be fulfilled by running:
 
     sudo zypper install gcc-g++ make cmake
 
