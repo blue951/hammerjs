@@ -35,9 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <dirent.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -53,6 +51,9 @@
 #if !defined(PATH_MAX)
 #define PATH_MAX MAX_PATH
 #endif
+#else // HAMMERJS_OS_WINDOWS
+#include <dirent.h>
+#include <unistd.h>
 #endif
 
 using namespace v8;
