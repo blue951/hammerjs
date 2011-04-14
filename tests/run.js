@@ -92,6 +92,7 @@ function test_parser() {
         } else {
             actual = JSON.stringify(syntax, undefined, 4).replace(/[\r\n]/g, '');
             if (actual !== ref) {
+                syntaxFileName = fileName.replace(/\.js$/, '.syntax-actual');
                 system.print('    Different syntax. Compare to', syntaxFileName);
                 writeFile(syntaxFileName, JSON.stringify(syntax, undefined, 4));
             }
