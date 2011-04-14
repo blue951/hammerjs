@@ -1,0 +1,23 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "VariableDeclaration",
+            "declarations": [
+                {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                        "type": "Identifier",
+                        "name": "constant"
+                    },
+                    "right": {
+                        "type": "Literal",
+                        "objtype": "String",
+                        "value": "Hello, world!"
+                    }
+                }
+            ]
+        }
+    ]
+}

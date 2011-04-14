@@ -1,0 +1,60 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "VariableDeclaration",
+            "declarations": [
+                {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                        "type": "Identifier",
+                        "name": "i"
+                    },
+                    "right": {
+                        "type": "Literal",
+                        "objtype": "Number",
+                        "value": "0"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "DoWhileStatement",
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "+=",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "i"
+                            },
+                            "right": {
+                                "type": "Literal",
+                                "objtype": "Number",
+                                "value": "2"
+                            }
+                        }
+                    }
+                ]
+            },
+            "test": {
+                "type": "BinaryExpression",
+                "operator": "<",
+                "left": {
+                    "type": "Identifier",
+                    "name": "i"
+                },
+                "right": {
+                    "type": "Literal",
+                    "objtype": "Number",
+                    "value": "400"
+                }
+            }
+        }
+    ]
+}

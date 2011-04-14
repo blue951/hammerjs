@@ -1,0 +1,88 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "VariableDeclaration",
+            "declarations": [
+                {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                        "type": "Identifier",
+                        "name": "array"
+                    },
+                    "right": {
+                        "type": "ArrayExpression",
+                        "elements": [
+                            {
+                                "type": "Literal",
+                                "objtype": "String",
+                                "value": "Mercurius"
+                            },
+                            {
+                                "type": "Literal",
+                                "objtype": "String",
+                                "value": "Venus"
+                            },
+                            {
+                                "type": "Literal",
+                                "objtype": "String",
+                                "value": "Earth"
+                            },
+                            {
+                                "type": "Literal",
+                                "objtype": "String",
+                                "value": "Mars"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "ForInStatement",
+            "left": {
+                "type": "VariableDeclaration",
+                "declarations": [
+                    {
+                        "type": "VariableDeclarator",
+                        "id": {
+                            "type": "Identifier",
+                            "name": "i"
+                        },
+                        "init": null
+                    }
+                ]
+            },
+            "right": {
+                "type": "Identifier",
+                "name": "array"
+            },
+            "body": {
+                "type": "ExpressionStatement",
+                "expression": {
+                    "type": "CallExpression",
+                    "callee": {
+                        "type": "MemberExpression",
+                        "accesstype": "Dot",
+                        "object": {
+                            "type": "Identifier",
+                            "name": "system"
+                        },
+                        "property": {
+                            "type": "Identifier",
+                            "name": "print"
+                        }
+                    },
+                    "arguments": [
+                        {
+                            "type": "Identifier",
+                            "name": "i"
+                        }
+                    ]
+                }
+            },
+            "each": false
+        }
+    ]
+}

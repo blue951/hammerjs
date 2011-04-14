@@ -1,0 +1,23 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "VariableDeclaration",
+            "declarations": [
+                {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                        "type": "Identifier",
+                        "name": "answer"
+                    },
+                    "right": {
+                        "type": "Literal",
+                        "objtype": "Number",
+                        "value": "42"
+                    }
+                }
+            ]
+        }
+    ]
+}

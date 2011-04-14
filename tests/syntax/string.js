@@ -1,0 +1,1 @@
+var constant = "Hello, world!";
