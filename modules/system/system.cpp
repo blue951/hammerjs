@@ -25,6 +25,8 @@
 
 #include <iostream>
 
+#include <stdlib.h>
+
 using namespace v8;
 
 extern int hammerjs_argc;
