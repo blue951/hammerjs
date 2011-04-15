@@ -77,13 +77,74 @@ static Handle<Value> system_execute(const Arguments& args);
 static Handle<Value> system_exit(const Arguments& args);
 static Handle<Value> system_print(const Arguments& args);
 
+static int hammerjs_argc;
+static char** hammerjs_argv;
+
 static void CleanupStream(Persistent<Value>, void *data)
 {
     delete reinterpret_cast<std::fstream*>(data);
 }
 
+void setup_system(Handle<Object> object)
+{
+    Handle<FunctionTemplate> systemObject = FunctionTemplate::New();
+
+    Handle<Array> systemArgs = Array::New(hammerjs_argc);
+    for (int i = 1; i < hammerjs_argc; ++i)
+        systemArgs->Set(i - 1, String::New(hammerjs_argv[i]));
+    systemObject->Set(String::New("args"), systemArgs);
+    systemObject->Set(String::New("execute"), FunctionTemplate::New(system_execute)->GetFunction());
+    systemObject->Set(String::New("exit"), FunctionTemplate::New(system_exit)->GetFunction());
+    systemObject->Set(String::New("print"), FunctionTemplate::New(system_print)->GetFunction());
+
+    object->Set(String::New("system"), systemObject->GetFunction());
+}
+
+void setup_fs(Handle<Object> object)
+{
+    // 'fs' object
+    Handle<FunctionTemplate> fsObject = FunctionTemplate::New();
+#if defined(HAMMERJS_OS_WINDOWS)
+    fsObject->Set(String::New("pathSeparator"), String::New("\\"), ReadOnly);
+#else
+    fsObject->Set(String::New("pathSeparator"), String::New("/"), ReadOnly);
+#endif
+    fsObject->Set(String::New("exists"), FunctionTemplate::New(fs_exists)->GetFunction());
+    fsObject->Set(String::New("makeDirectory"), FunctionTemplate::New(fs_makeDirectory)->GetFunction());
+    fsObject->Set(String::New("isDirectory"), FunctionTemplate::New(fs_isDirectory)->GetFunction());
+    fsObject->Set(String::New("isFile"), FunctionTemplate::New(fs_isFile)->GetFunction());
+    fsObject->Set(String::New("list"), FunctionTemplate::New(fs_list)->GetFunction());
+    fsObject->Set(String::New("open"), FunctionTemplate::New(fs_open)->GetFunction());
+    fsObject->Set(String::New("workingDirectory"), FunctionTemplate::New(fs_workingDirectory)->GetFunction());
+
+    // 'Stream' class
+    Handle<FunctionTemplate> streamClass = FunctionTemplate::New(stream_constructor);
+    streamClass->SetClassName(String::New("Stream"));
+    streamClass->InstanceTemplate()->SetInternalFieldCount(1);
+    streamClass->InstanceTemplate()->Set(String::New("close"), FunctionTemplate::New(stream_close)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("flush"), FunctionTemplate::New(stream_flush)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("next"), FunctionTemplate::New(stream_next)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("readLine"), FunctionTemplate::New(stream_readLine)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("writeLine"), FunctionTemplate::New(stream_writeLine)->GetFunction());
+
+    object->Set(String::New("fs"), fsObject->GetFunction());
+    object->Set(String::New("Stream"), streamClass->GetFunction(), PropertyAttribute(ReadOnly | DontDelete));
+}
+
+void setup_Reflect(Handle<Object> object)
+{
+    Handle<FunctionTemplate> reflectObject = FunctionTemplate::New();
+
+    reflectObject->Set(String::New("parse"), FunctionTemplate::New(reflect_parse)->GetFunction());
+
+    object->Set(String::New("Reflect"), reflectObject->GetFunction());
+}
+
 int main(int argc, char* argv[])
 {
+    hammerjs_argc = argc;
+    hammerjs_argv = argv;
+
     if (argc < 2) {
         std::cout << "Usage: hammerjs inputfile.js" << std::endl;
         return 0;
@@ -110,48 +171,9 @@ int main(int argc, char* argv[])
 
     Context::Scope context_scope(context);
 
-    // 'fs' object
-    Handle<FunctionTemplate> fsObject = FunctionTemplate::New();
-#if defined(HAMMERJS_OS_WINDOWS)
-    fsObject->Set(String::New("pathSeparator"), String::New("\\"), ReadOnly);
-#else
-    fsObject->Set(String::New("pathSeparator"), String::New("/"), ReadOnly);
-#endif
-    fsObject->Set(String::New("exists"), FunctionTemplate::New(fs_exists)->GetFunction());
-    fsObject->Set(String::New("makeDirectory"), FunctionTemplate::New(fs_makeDirectory)->GetFunction());
-    fsObject->Set(String::New("isDirectory"), FunctionTemplate::New(fs_isDirectory)->GetFunction());
-    fsObject->Set(String::New("isFile"), FunctionTemplate::New(fs_isFile)->GetFunction());
-    fsObject->Set(String::New("list"), FunctionTemplate::New(fs_list)->GetFunction());
-    fsObject->Set(String::New("open"), FunctionTemplate::New(fs_open)->GetFunction());
-    fsObject->Set(String::New("workingDirectory"), FunctionTemplate::New(fs_workingDirectory)->GetFunction());
-    context->Global()->Set(String::New("fs"), fsObject->GetFunction());
-
-    // 'Reflect' object
-    Handle<FunctionTemplate> reflectObject = FunctionTemplate::New();
-    reflectObject->Set(String::New("parse"), FunctionTemplate::New(reflect_parse)->GetFunction());
-    context->Global()->Set(String::New("Reflect"), reflectObject->GetFunction());
-
-    // 'system' object
-    Handle<FunctionTemplate> systemObject = FunctionTemplate::New();
-    Handle<Array> systemArgs = Array::New(argc);
-    for (int i = 1; i < argc; ++i)
-        systemArgs->Set(i - 1, String::New(argv[i]));
-    systemObject->Set(String::New("args"), systemArgs);
-    systemObject->Set(String::New("execute"), FunctionTemplate::New(system_execute)->GetFunction());
-    systemObject->Set(String::New("exit"), FunctionTemplate::New(system_exit)->GetFunction());
-    systemObject->Set(String::New("print"), FunctionTemplate::New(system_print)->GetFunction());
-    context->Global()->Set(String::New("system"), systemObject->GetFunction());
-
-    // 'Stream' class
-    Handle<FunctionTemplate> streamClass = FunctionTemplate::New(stream_constructor);
-    streamClass->SetClassName(String::New("Stream"));
-    streamClass->InstanceTemplate()->SetInternalFieldCount(1);
-    streamClass->InstanceTemplate()->Set(String::New("close"), FunctionTemplate::New(stream_close)->GetFunction());
-    streamClass->InstanceTemplate()->Set(String::New("flush"), FunctionTemplate::New(stream_flush)->GetFunction());
-    streamClass->InstanceTemplate()->Set(String::New("next"), FunctionTemplate::New(stream_next)->GetFunction());
-    streamClass->InstanceTemplate()->Set(String::New("readLine"), FunctionTemplate::New(stream_readLine)->GetFunction());
-    streamClass->InstanceTemplate()->Set(String::New("writeLine"), FunctionTemplate::New(stream_writeLine)->GetFunction());
-    context->Global()->Set(String::New("Stream"), streamClass->GetFunction(), PropertyAttribute(ReadOnly | DontDelete));
+    setup_system(context->Global());
+    setup_fs(context->Global());
+    setup_Reflect(context->Global());
 
     Handle<Script> script = Script::Compile(String::New(buf));
     if (script.IsEmpty())
