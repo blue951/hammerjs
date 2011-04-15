@@ -22,7 +22,6 @@
 */
 
 #include <v8.h>
-#include <v8-debug.h>
 
 #if defined(WIN32) || defined(_WIN32)
 #define HAMMERJS_OS_WINDOWS
@@ -40,10 +39,6 @@
 #include <iostream>
 #include <sstream>
 
-#include <JSGlobalData.h>
-#include <SourceCode.h>
-#include <UString.h>
-
 #if defined(HAMMERJS_OS_WINDOWS)
 #include <windows.h>
 #if !defined(PATH_MAX)
@@ -56,66 +51,9 @@
 
 using namespace v8;
 
-static Handle<Value> reflect_parse(const Arguments& args);
-
-int hammerjs_argc;
-char** hammerjs_argv;
-
-void setup_system(Handle<Object> object); // modules/system/system.cpp
-void setup_fs(Handle<Object> object); // modules/fs/fs.cpp
-
-void setup_Reflect(Handle<Object> object)
+static void CleanupStream(Persistent<Value>, void *data)
 {
-    Handle<FunctionTemplate> reflectObject = FunctionTemplate::New();
-
-    reflectObject->Set(String::New("parse"), FunctionTemplate::New(reflect_parse)->GetFunction());
-
-    object->Set(String::New("Reflect"), reflectObject->GetFunction());
-}
-
-int main(int argc, char* argv[])
-{
-    hammerjs_argc = argc;
-    hammerjs_argv = argv;
-
-    if (argc < 2) {
-        std::cout << "Usage: hammerjs inputfile.js" << std::endl;
-        return 0;
-    }
-
-    FILE* f = fopen(argv[1], "rb");
-    if (!f) {
-        std::cerr << "Error: unable to open file " << argv[1] << std::endl;
-        return 0;
-    }
-    fseek(f, 0, SEEK_END);
-    int len = ftell(f);
-    rewind(f);
-    char* buf = new char[len + 1];
-    fread(buf, 1, len, f);
-    buf[len - 1] = '\0';
-    fclose(f);
-
-    v8::Debug::EnableAgent(argv[1], 5858, true);
-
-    HandleScope handle_scope;
-    Handle<ObjectTemplate> global = ObjectTemplate::New();
-    Handle<Context> context = Context::New(NULL, global);
-
-    Context::Scope context_scope(context);
-
-    setup_system(context->Global());
-    setup_fs(context->Global());
-    setup_Reflect(context->Global());
-
-    Handle<Script> script = Script::Compile(String::New(buf));
-    if (script.IsEmpty())
-        std::cerr << "Error: unable to run " << argv[1] << std::endl;
-    else
-        script->Run();
-
-    delete [] buf;
-    return 0;
+    delete reinterpret_cast<std::fstream*>(data);
 }
 
 static Handle<Value> fs_exists(const Arguments& args)
@@ -275,37 +213,168 @@ static Handle<Value> fs_open(const Arguments& args)
     return result;
 }
 
-static Handle<Value> reflect_parse(const Arguments& args)
+static Handle<Value> fs_workingDirectory(const Arguments& args)
+{
+    if (args.Length() != 0)
+        return ThrowException(String::New("Exception: function fs.workingDirectory() accepts no argument"));
+
+    char currentName[PATH_MAX + 1];
+    currentName[0] = 0;
+#if defined(HAMMERJS_OS_WINDOWS)
+    DWORD len = ::GetCurrentDirectory(PATH_MAX, currentName);
+    if (len == 0 || len > PATH_MAX)
+        return ThrowException(String::New("Exception: function fs.workingDirectory() can not get current directory"));
+    return String::New(currentName);
+#else
+    if (::getcwd(currentName, PATH_MAX))
+        return String::New(currentName);
+#endif
+
+    return ThrowException(String::New("Exception: fs.workingDirectory() can't get current working directory"));
+}
+
+static Handle<Value> stream_constructor(const Arguments& args)
+{
+    HandleScope handle_scope;
+
+    if (args.Length() != 1 && args.Length() != 2)
+        return ThrowException(String::New("Exception: Stream constructor accepts 1 or 2 arguments"));
+
+    String::Utf8Value name(args[0]);
+    String::Utf8Value modes(args[1]);
+
+    std::fstream::openmode mode = std::fstream::in;
+    if (args.Length() == 2) {
+        String::Utf8Value m(args[0]);
+        const char* options = *modes;
+        bool read = strchr(options, 'r');
+        bool write = strchr(options, 'w');
+        if (!read && !write)
+            return ThrowException(String::New("Exception: Invalid open mode for Stream"));
+        if (!read)
+            mode = std::fstream::out;
+        if (write)
+            mode |= std::fstream::out;
+    }
+
+    std::fstream *data = new std::fstream;
+    data->open(*name, mode);
+    if (data->bad()) {
+        delete data;
+        return ThrowException(String::New("Exception: Can't open the file"));
+    }
+
+    args.This()->SetPointerInInternalField(0, data);
+
+    Persistent<Object> persistent = Persistent<Object>::New(args.Holder());
+    persistent.MakeWeak(data, CleanupStream);
+
+    persistent->Set(String::New("name"), args[0]);
+
+    return handle_scope.Close(persistent);
+}
+
+static Handle<Value> stream_close(const Arguments& args)
+{
+    if (args.Length() != 0)
+        return ThrowException(String::New("Exception: Stream.close() accepts no argument"));
+
+    void *data = args.This()->GetPointerFromInternalField(0);
+    std::fstream *fs = reinterpret_cast<std::fstream*>(data);
+    fs->close();
+
+    return Undefined();
+}
+
+static Handle<Value> stream_flush(const Arguments& args)
+{
+    if (args.Length() != 0)
+        return ThrowException(String::New("Exception: Stream.flush() accepts no argument"));
+
+    void *data = args.This()->GetPointerFromInternalField(0);
+    std::fstream *fs = reinterpret_cast<std::fstream*>(data);
+    fs->flush();
+
+    return args.This();
+}
+
+static Handle<Value> stream_next(const Arguments& args)
+{
+    if (args.Length() != 0)
+        return ThrowException(String::New("Exception: Stream.next() accepts no argument"));
+
+    void *data = args.This()->GetPointerFromInternalField(0);
+    std::fstream *fs = reinterpret_cast<std::fstream*>(data);
+
+    std::string buffer;
+    std::getline(*fs, buffer);
+    if (fs->eof())
+        return ThrowException(String::New("Exception: Stream.next() reaches end of file"));
+
+    return String::New(buffer.c_str());
+}
+
+static Handle<Value> stream_readLine(const Arguments& args)
+{
+    if (args.Length() != 0)
+        return ThrowException(String::New("Exception: Stream.readLine() accepts no argument"));
+
+    void *data = args.This()->GetPointerFromInternalField(0);
+    std::fstream *fs = reinterpret_cast<std::fstream*>(data);
+
+    if (fs->eof())
+        return String::NewSymbol("");
+
+    std::string buffer;
+    std::getline(*fs, buffer);
+    buffer.append("\n");
+
+    return String::New(buffer.c_str());
+}
+
+static Handle<Value> stream_writeLine(const Arguments& args)
 {
     if (args.Length() != 1)
-        return ThrowException(String::New("Exception: Reflect.parse() accepts 1 argument"));
+        return ThrowException(String::New("Exception: Stream.writeLine() accepts 1 argument"));
 
-    String::Utf8Value code(args[0]);
-    UChar *content = new UChar[code.length()];
-    for (int i = 0; i < code.length(); ++i)
-        content[i] = (*code)[i];
-    JSC::UString scriptCode = JSC::UString(content, code.length());
-    delete [] content;
+    void *data = args.This()->GetPointerFromInternalField(0);
+    std::fstream *fs = reinterpret_cast<std::fstream*>(data);
 
-    JSC::JSGlobalData* globalData = new JSC::JSGlobalData;
-    JSC::UString tree = globalData->parser->createSyntaxTree(globalData, JSC::makeSource(scriptCode));
-    delete globalData;
+    String::Utf8Value line(args[0]);
+    fs->write(*line, line.length());
+    fs->put('\n');
 
-    if (tree.length() == 0)
-        return Undefined();
-
-    char *buffer = new char[tree.length() + 1];
-    buffer[tree.length()] = '\0';
-    const UChar *uchars = tree.characters();
-    for (size_t i = 0; i < tree.length(); ++i)
-        buffer[i] = uchars[i];
-
-    Handle<ObjectTemplate> global = ObjectTemplate::New();
-    global->Set("tree", String::New(buffer));
-    Handle<Context> context = Context::New(NULL, global);
-    Context::Scope context_scope(context);
-
-    Handle<Script> script = Script::Compile(String::New("JSON.parse(tree)"));
-    delete [] buffer;
-    return script->Run();
+    return args.This();
 }
+
+void setup_fs(Handle<Object> object)
+{
+    // 'fs' object
+    Handle<FunctionTemplate> fsObject = FunctionTemplate::New();
+#if defined(HAMMERJS_OS_WINDOWS)
+    fsObject->Set(String::New("pathSeparator"), String::New("\\"), ReadOnly);
+#else
+    fsObject->Set(String::New("pathSeparator"), String::New("/"), ReadOnly);
+#endif
+    fsObject->Set(String::New("exists"), FunctionTemplate::New(fs_exists)->GetFunction());
+    fsObject->Set(String::New("makeDirectory"), FunctionTemplate::New(fs_makeDirectory)->GetFunction());
+    fsObject->Set(String::New("isDirectory"), FunctionTemplate::New(fs_isDirectory)->GetFunction());
+    fsObject->Set(String::New("isFile"), FunctionTemplate::New(fs_isFile)->GetFunction());
+    fsObject->Set(String::New("list"), FunctionTemplate::New(fs_list)->GetFunction());
+    fsObject->Set(String::New("open"), FunctionTemplate::New(fs_open)->GetFunction());
+    fsObject->Set(String::New("workingDirectory"), FunctionTemplate::New(fs_workingDirectory)->GetFunction());
+
+    // 'Stream' class
+    Handle<FunctionTemplate> streamClass = FunctionTemplate::New(stream_constructor);
+    streamClass->SetClassName(String::New("Stream"));
+    streamClass->InstanceTemplate()->SetInternalFieldCount(1);
+    streamClass->InstanceTemplate()->Set(String::New("close"), FunctionTemplate::New(stream_close)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("flush"), FunctionTemplate::New(stream_flush)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("next"), FunctionTemplate::New(stream_next)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("readLine"), FunctionTemplate::New(stream_readLine)->GetFunction());
+    streamClass->InstanceTemplate()->Set(String::New("writeLine"), FunctionTemplate::New(stream_writeLine)->GetFunction());
+
+    object->Set(String::New("fs"), fsObject->GetFunction());
+    object->Set(String::New("Stream"), streamClass->GetFunction(), PropertyAttribute(ReadOnly | DontDelete));
+}
+

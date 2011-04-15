@@ -65,7 +65,10 @@ else()
 endif()
 
 link_directories(${PROJECT_SOURCE_DIR}/v8)
-target_link_libraries(hammerjs v8 hammerjs_system)
+target_link_libraries(hammerjs v8)
+
+target_link_libraries(hammerjs hammerjs_system)
+target_link_libraries(hammerjs hammerjs_fs)
 
 if(UNIX)
     target_link_libraries(hammerjs pthread)
