@@ -280,3 +280,27 @@ All the example scripts below are available in the <code>examples/</code> direct
     f.close();
     system.print(JSON.stringify(Reflect.parse(content), undefined, 4));
 
+# Debugging
+
+Note: This is experimental and likely to change (read: more stand-alone
+and developer friendly) in the near future.
+
+First step is to add <code>debugger</code> statement as the first line
+in the script source.
+
+Run the script as usual, e.g.:
+
+    hammerjs examples/countdown.js
+
+Now install [node-inspector](https://github.com/dannycoates/node-inspector) and launch it:
+
+    node-inspector
+
+Open a WebKit-based web browser, e.g. Safari or Chrome, then go to the
+following URL:
+
+    http://localhost:8080/debug?port=5858
+
+Now it is possible to breakpoint, single step, run/pause, add watch, and
+so on from the debugger interface.
+

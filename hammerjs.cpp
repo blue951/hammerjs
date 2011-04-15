@@ -22,13 +22,10 @@
 */
 
 #include <v8.h>
+#include <v8-debug.h>
 
 #if defined(WIN32) || defined(_WIN32)
 #define HAMMERJS_OS_WINDOWS
-#endif
-
-#if defined(HAMMERJS_DEBUGGER)
-#include <v8-debug.h>
 #endif
 
 #include <stdio.h>
@@ -105,9 +102,7 @@ int main(int argc, char* argv[])
     buf[len - 1] = '\0';
     fclose(f);
 
-#if defined(HAMMERJS_DEBUGGER)
     v8::Debug::EnableAgent(argv[1], 5858, true);
-#endif
 
     HandleScope handle_scope;
     Handle<ObjectTemplate> global = ObjectTemplate::New();

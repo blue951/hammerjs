@@ -3,15 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 project(HammerJS)
 
 add_subdirectory(v8)
-
-if(${EBUG} EQUAL 1)
-    set(CMAKE_BUILD_TYPE "Debug")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DHAMMERJS_DEBUGGER")
-    set(LIBV8 ${PROJECT_SOURCE_DIR}/v8/libv8_g.a)
-else()
-    set(CMAKE_BUILD_TYPE "Release")
-    set(LIBV8 ${PROJECT_SOURCE_DIR}/v8/libv8.a)
-endif()
+set(LIBV8 ${PROJECT_SOURCE_DIR}/v8/libv8.a)
 
 if(CMAKE_COMPILER_IS_GNUCXX )
    add_definitions(-Wall)
