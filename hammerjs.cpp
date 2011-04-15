@@ -54,8 +54,8 @@ int main(int argc, char* argv[])
     int len = ftell(f);
     rewind(f);
     char* buf = new char[len + 1];
+    memset(buf, '\0', len + 1);
     fread(buf, 1, len, f);
-    buf[len - 1] = '\0';
     fclose(f);
 
     v8::Debug::EnableAgent(argv[1], 5858, true);
