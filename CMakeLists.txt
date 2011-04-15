@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 project(HammerJS)
 
 add_subdirectory(v8)
-set(LIBV8 ${PROJECT_SOURCE_DIR}/v8/libv8.a)
+add_subdirectory(modules)
 
 if(CMAKE_COMPILER_IS_GNUCXX )
    add_definitions(-Wall)
@@ -65,7 +65,7 @@ else()
 endif()
 
 link_directories(${PROJECT_SOURCE_DIR}/v8)
-target_link_libraries(hammerjs v8)
+target_link_libraries(hammerjs v8 hammerjs_system)
 
 if(UNIX)
     target_link_libraries(hammerjs pthread)

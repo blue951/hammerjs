@@ -73,32 +73,15 @@ static Handle<Value> stream_next(const Arguments& args);
 static Handle<Value> stream_readLine(const Arguments& args);
 static Handle<Value> stream_writeLine(const Arguments& args);
 
-static Handle<Value> system_execute(const Arguments& args);
-static Handle<Value> system_exit(const Arguments& args);
-static Handle<Value> system_print(const Arguments& args);
-
-static int hammerjs_argc;
-static char** hammerjs_argv;
+int hammerjs_argc;
+char** hammerjs_argv;
 
 static void CleanupStream(Persistent<Value>, void *data)
 {
     delete reinterpret_cast<std::fstream*>(data);
 }
 
-void setup_system(Handle<Object> object)
-{
-    Handle<FunctionTemplate> systemObject = FunctionTemplate::New();
-
-    Handle<Array> systemArgs = Array::New(hammerjs_argc);
-    for (int i = 1; i < hammerjs_argc; ++i)
-        systemArgs->Set(i - 1, String::New(hammerjs_argv[i]));
-    systemObject->Set(String::New("args"), systemArgs);
-    systemObject->Set(String::New("execute"), FunctionTemplate::New(system_execute)->GetFunction());
-    systemObject->Set(String::New("exit"), FunctionTemplate::New(system_exit)->GetFunction());
-    systemObject->Set(String::New("print"), FunctionTemplate::New(system_print)->GetFunction());
-
-    object->Set(String::New("system"), systemObject->GetFunction());
-}
+void setup_system(Handle<Object> object); // modules/system/system.cpp
 
 void setup_fs(Handle<Object> object)
 {
@@ -510,46 +493,3 @@ static Handle<Value> stream_writeLine(const Arguments& args)
 
     return args.This();
 }
-
-static Handle<Value> system_execute(const Arguments& args)
-{
-    HandleScope handle_scope;
-
-    if (args.Length() != 1)
-        return ThrowException(String::New("Exception: function system.execute() accepts 1 argument"));
-
-    String::Utf8Value cmd(args[0]);
-    ::system(*cmd);
-
-
-    return Undefined();
-}
-
-static Handle<Value> system_exit(const Arguments& args)
-{
-    HandleScope handle_scope;
-
-    if (args.Length() != 0 && args.Length() != 1)
-        return ThrowException(String::New("Exception: function system.exit() accepts 1 argument"));
-
-    int status = (args.Length() == 1) ? args[0]->Int32Value() : 0;
-    exit(status);
-
-    return Undefined();
-}
-
-static Handle<Value> system_print(const Arguments& args)
-{
-    HandleScope handle_scope;
-
-    for (int i = 0; i < args.Length(); i++) {
-        String::Utf8Value value(args[i]);
-        std::cout << *value;
-        if (i < args.Length() - 1)
-            std::cout << ' ';
-    }
-    std::cout << std::endl;
-
-    return Undefined();
-}
-
