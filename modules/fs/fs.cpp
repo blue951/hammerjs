@@ -44,9 +44,11 @@
 #if !defined(PATH_MAX)
 #define PATH_MAX MAX_PATH
 #endif
+#define PATH_SEPARATOR "\\"
 #else // HAMMERJS_OS_WINDOWS
 #include <dirent.h>
 #include <unistd.h>
+#define PATH_SEPARATOR "/"
 #endif
 
 using namespace v8;
@@ -351,11 +353,8 @@ void setup_fs(Handle<Object> object)
 {
     // 'fs' object
     Handle<FunctionTemplate> fsObject = FunctionTemplate::New();
-#if defined(HAMMERJS_OS_WINDOWS)
-    fsObject->Set(String::New("pathSeparator"), String::New("\\"), ReadOnly);
-#else
+    fsObject->Set(String::New("pathSeparator"), String::New(PATH_SEPARATOR), ReadOnly);
     fsObject->Set(String::New("pathSeparator"), String::New("/"), ReadOnly);
-#endif
     fsObject->Set(String::New("exists"), FunctionTemplate::New(fs_exists)->GetFunction());
     fsObject->Set(String::New("makeDirectory"), FunctionTemplate::New(fs_makeDirectory)->GetFunction());
     fsObject->Set(String::New("isDirectory"), FunctionTemplate::New(fs_isDirectory)->GetFunction());
