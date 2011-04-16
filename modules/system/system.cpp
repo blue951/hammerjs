@@ -76,14 +76,11 @@ static Handle<Value> system_print(const Arguments& args)
 
 
 
-void setup_system(Handle<Object> object)
+void setup_system(Handle<Object> object, Handle<Array> args)
 {
     Handle<FunctionTemplate> systemObject = FunctionTemplate::New();
 
-    Handle<Array> systemArgs = Array::New(hammerjs_argc);
-    for (int i = 1; i < hammerjs_argc; ++i)
-        systemArgs->Set(i - 1, String::New(hammerjs_argv[i]));
-    systemObject->Set(String::New("args"), systemArgs);
+    systemObject->Set(String::New("args"), args);
     systemObject->Set(String::New("execute"), FunctionTemplate::New(system_execute)->GetFunction());
     systemObject->Set(String::New("exit"), FunctionTemplate::New(system_exit)->GetFunction());
     systemObject->Set(String::New("print"), FunctionTemplate::New(system_print)->GetFunction());

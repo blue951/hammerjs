@@ -349,7 +349,7 @@ static Handle<Value> stream_writeLine(const Arguments& args)
     return args.This();
 }
 
-void setup_fs(Handle<Object> object)
+void setup_fs(Handle<Object> object, Handle<Array> args)
 {
     // 'fs' object
     Handle<FunctionTemplate> fsObject = FunctionTemplate::New();

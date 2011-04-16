@@ -30,18 +30,12 @@
 
 using namespace v8;
 
-int hammerjs_argc;
-char** hammerjs_argv;
-
-void setup_system(Handle<Object> object); // modules/system/system.cpp
-void setup_fs(Handle<Object> object); // modules/fs/fs.cpp
-void setup_Reflect(Handle<Object> object); // modules/reflect/reflect.cpp
+void setup_system(Handle<Object> object, Handle<Array> args);   // modules/system/system.cpp
+void setup_fs(Handle<Object> object, Handle<Array> args);       // modules/fs/fs.cpp
+void setup_Reflect(Handle<Object> object, Handle<Array> args);  // modules/reflect/reflect.cpp
 
 int main(int argc, char* argv[])
 {
-    hammerjs_argc = argc;
-    hammerjs_argv = argv;
-
     if (argc < 2) {
         std::cout << "Usage: hammerjs inputfile.js" << std::endl;
         return 0;
@@ -68,9 +62,13 @@ int main(int argc, char* argv[])
 
     Context::Scope context_scope(context);
 
-    setup_system(context->Global());
-    setup_fs(context->Global());
-    setup_Reflect(context->Global());
+    Handle<Array> args = Array::New(argc);
+    for (int i = 1; i < argc; ++i)
+        args->Set(i - 1, String::New(argv[i]));
+
+    setup_system(context->Global(), args);
+    setup_fs(context->Global(), args);
+    setup_Reflect(context->Global(), args);
 
     Handle<Script> script = Script::Compile(String::New(buf));
     if (script.IsEmpty())

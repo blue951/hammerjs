@@ -64,7 +64,7 @@ static Handle<Value> reflect_parse(const Arguments& args)
     return script->Run();
 }
 
-void setup_Reflect(Handle<Object> object)
+void setup_Reflect(Handle<Object> object, Handle<Array> args)
 {
     Handle<FunctionTemplate> reflectObject = FunctionTemplate::New();
 
