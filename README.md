@@ -282,25 +282,28 @@ All the example scripts below are available in the <code>examples/</code> direct
 
 # Debugging
 
-Note: This is experimental and likely to change (read: more stand-alone
-and developer friendly) in the near future.
+Requirement: [node-inspector](https://github.com/dannycoates/node-inspector).
+Note: This may change in the future and HammerJS will have its own
+built-in debugger handler.
 
-First step is to add <code>debugger</code> statement as the first line
-in the script source.
+Run the script as usual but with <code>--debug</code> option, e.g.:
 
-Run the script as usual, e.g.:
+    hammerjs --debug examples/countdown.js
 
-    hammerjs examples/countdown.js
+Instead of running the script directly, now HammerJS pauses until the
+debugger starts.
 
-Now install [node-inspector](https://github.com/dannycoates/node-inspector) and launch it:
+Run the node-inspector:
 
     node-inspector
 
 Open a WebKit-based web browser, e.g. Safari or Chrome, then go to the
 following URL:
 
-    http://localhost:8080/debug?port=5858
+    http://0.0.0.0:8080/debug?port=5858
 
 Now it is possible to breakpoint, single step, run/pause, add watch, and
 so on from the debugger interface.
 
+HammerJS also understand <code>debugger</code> statement inside the
+script (if any) and always breaks there.

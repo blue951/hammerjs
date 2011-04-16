@@ -26,6 +26,7 @@
 
 #include <iostream>
 
+#include <stdlib.h>
 #include <string.h>
 
 using namespace v8;
@@ -34,14 +35,50 @@ void setup_system(Handle<Object> object, Handle<Array> args);   // modules/syste
 void setup_fs(Handle<Object> object, Handle<Array> args);       // modules/fs/fs.cpp
 void setup_Reflect(Handle<Object> object, Handle<Array> args);  // modules/reflect/reflect.cpp
 
+void showUsage()
+{
+    std::cout << "Usage: hammerjs [options] script.js [arguments]" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "  --debug    Enables remote debugging" << std::endl;
+    std::cout << std::endl;
+    ::exit(0);
+}
+
 int main(int argc, char* argv[])
 {
-    if (argc < 2) {
-        std::cout << "Usage: hammerjs inputfile.js" << std::endl;
-        return 0;
+    V8::Initialize();
+
+    HandleScope handle_scope;
+    Handle<ObjectTemplate> global = ObjectTemplate::New();
+    Handle<Context> context = Context::New(NULL, global);
+
+    Context::Scope context_scope(context);
+
+    Handle<Array> args = Array::New();
+    const char* inputFile = 0;
+    bool debug = false;
+    for (int i = 1, index = 0; i < argc; ++i) {
+        const char* arg = argv[i];
+        if (arg[0] == '-') {
+            if (!strcmp(arg, "--debug")) {
+                debug = true;
+                continue;
+            }
+            std::cerr << "Unknown option: " << arg << std::endl;
+            return 0;
+        } else {
+            if (!inputFile)
+                inputFile = arg;
+            args->Set(index, String::New(arg));
+            ++index;
+        }
     }
 
-    FILE* f = fopen(argv[1], "rb");
+    if (!inputFile)
+        showUsage();
+
+    FILE* f = fopen(inputFile, "rb");
     if (!f) {
         std::cerr << "Error: unable to open file " << argv[1] << std::endl;
         return 0;
@@ -53,29 +90,21 @@ int main(int argc, char* argv[])
     memset(buf, '\0', len + 1);
     fread(buf, 1, len, f);
     fclose(f);
-
-    v8::Debug::EnableAgent(argv[1], 5858, true);
-
-    HandleScope handle_scope;
-    Handle<ObjectTemplate> global = ObjectTemplate::New();
-    Handle<Context> context = Context::New(NULL, global);
-
-    Context::Scope context_scope(context);
-
-    Handle<Array> args = Array::New(argc);
-    for (int i = 1; i < argc; ++i)
-        args->Set(i - 1, String::New(argv[i]));
+    Handle<String> code = String::New(buf);
+    delete [] buf;
 
     setup_system(context->Global(), args);
     setup_fs(context->Global(), args);
     setup_Reflect(context->Global(), args);
 
-    Handle<Script> script = Script::Compile(String::New(buf));
-    if (script.IsEmpty())
-        std::cerr << "Error: unable to run " << argv[1] << std::endl;
-    else
+    Handle<Script> script = Script::Compile(code);
+    if (script.IsEmpty()) {
+        std::cerr << "Error: unable to run " << inputFile << std::endl;
+    } else {
+        if (debug)
+            v8::Debug::EnableAgent(inputFile, 5858, true);
         script->Run();
+    }
 
-    delete [] buf;
     return 0;
 }
