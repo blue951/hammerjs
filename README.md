@@ -6,69 +6,18 @@ HammerJS has a rich set of API to do file I/O, system access, and syntax parsing
 
 # Build instructions
 
-**Tip**: If you are on a multicore system (like any modern computer
-these days), you can speed up the build by passing an extra argument to the
-make command, e.g. <code>make -j4</code> (where 4 denotes the number of
-simultaneous compiles at the same time).
+Building HammerJS is as easy as:
 
-## Mac OS X
-
-Ensure that the development tools are ready to use, i.e. by installing [Xcode 3.2 or later](http://developer.apple.com/tools/xcode/).
-
-Additional requirement is [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html) (just install the binary package). This is needed as the build tool.
-
-Run the following:
-
-    cmake .
+    ./configure
     make
 
-Installation step (requires Administrative password):
+To install the executable (with the target directory <code>/usr/local/bin</code>):
 
-    sudo make install
+    make install
 
-## Linux
+Alternatively copy <code>hammerjs</code> executable to some directory in the PATH.
 
-Ensure that the development tools are ready to use, as well as [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html).
-
-On Kubuntu or Ubuntu, these requirements can be fulfilled by running:
-
-    sudo apt-get install build-essential cmake
-
-On OpenSUSE, these requirements can be fulfilled by running:
-
-    sudo zypper install gcc-g++ make cmake
-
-Run the following:
-
-    cmake .
-    make
-
-Installation step (requires root password):
-
-    sudo make install
-
-## Windows
-
-Requirement: [CMake 2.6 or later](http://www.cmake.org/cmake/resources/software.html) (install the binary MSI) as the build tool.
-
-### MinGW
-
-Tested with [MinGW](http://www.mingw.org) with GCC version 4.5.
-
-In the command prompt, run the following:
-
-    cmake -G "MinGW Makefiles" .
-    mingw32-make
-
-### Visual C++
-
-Tested with [Visual Studio/C++ 2010 Express](http://www.microsoft.com/express/Windows/).
-
-In the command prompt, run the following:
-
-    cmake -G "Visual Studio 10" .
-
-Launch Visual Studio and open the solution file <code>HammerJS.sln</code>. Press F7 to build.
+For more detailed instructions, see the INSTALL file.
 
 # Quick Start
 

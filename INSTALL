@@ -1,0 +1,91 @@
+HammerJS Build and Installation Instructions
+--------------------------------------------
+
+Tip: If you are on a multicore system (like any modern computer these days),
+you can speed up the build by passing an extra argument to the make command:
+
+    make -j4
+
+where 4 denotes the number of simultaneous compiles.
+
+Mac OS X
+========
+
+Ensure that the development tools are ready to use, i.e. by installing
+Xcode 3.2 or later, see http://developer.apple.com/tools/xcode/.
+
+Run the following:
+
+    ./configure
+    make
+
+To install to /usr/local/bin (requires Administrator password):
+
+    sudo make install
+
+Alternatively copy hammerjs executable to a directory in the PATH, e.g ~/bin.
+
+Tip: For a faster initial build, install CMake 2.6 or later. Go to
+www.cmake.org/cmake/resources/software.html to get the binary package.
+
+If system-wide CMake is available, the configure script will use it.
+Otherwise it will download and build a local CMake.
+
+Linux
+=====
+
+Ensure that the development tools, e.g. compilers and libraries, are ready.
+
+On Kubuntu or Ubuntu, these requirements can be fulfilled by running:
+
+    sudo apt-get install build-essential
+
+On OpenSUSE, these requirements can be fulfilled by running:
+
+    sudo zypper install gcc-g++ make
+
+Run the following:
+
+    ./configure
+    make
+
+Installation step (requires root password):
+
+    sudo make install
+
+Alternatively copy hammerjs executable to a directory in the PATH, e.g ~/bin.
+
+Tip: For a faster initial build, install CMake 2.6 or later.
+If system-wide CMake is available, the configure script will use it.
+Otherwise it will download and build a local CMake.
+
+On Kubuntu or Ubuntu, CMake can be installed using:
+    sudo apt-get install cmake
+
+On OpenSUSE, CMake can be installed using:
+    sudo zypper install cmake
+
+Windows
+=======
+
+Requirement: CMake 2.6 or later.
+See www.cmake.org/cmake/resources/software.html and install the binary MSI.
+
+* Using MinGW (www.mingw.org)
+
+Tested with MinGW GCC version 4.5.
+
+In the command prompt, run the following:
+
+    cmake -G "MinGW Makefiles" .
+    mingw32-make
+
+* Using Visual C++
+
+Tested with Visual Studio/C++ 2010 Express (www.microsoft.com/express/Windows/).
+
+In the command prompt, run the following:
+
+    cmake -G "Visual Studio 10" .
+
+Launch Visual Studio and open the solution file HammerJS.sln. Press F7 to build.
