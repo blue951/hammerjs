@@ -41,6 +41,7 @@ void showUsage()
     std::cout << std::endl;
     std::cout << "Options:" << std::endl;
     std::cout << "  --debug    Enables remote debugging" << std::endl;
+    std::cout << "  --syntax   Prints the syntax tree (does not execute the script)" << std::endl;
     std::cout << std::endl;
     ::exit(0);
 }
@@ -58,11 +59,16 @@ int main(int argc, char* argv[])
     Handle<Array> args = Array::New();
     const char* inputFile = 0;
     bool debug = false;
+    bool syntax = false;
     for (int i = 1, index = 0; i < argc; ++i) {
         const char* arg = argv[i];
         if (arg[0] == '-') {
             if (!strcmp(arg, "--debug")) {
                 debug = true;
+                continue;
+            }
+            if (!strcmp(arg, "--syntax")) {
+                syntax = true;
                 continue;
             }
             std::cerr << "Unknown option: " << arg << std::endl;
@@ -97,13 +103,20 @@ int main(int argc, char* argv[])
     setup_fs(context->Global(), args);
     setup_Reflect(context->Global(), args);
 
-    Handle<Script> script = Script::Compile(code);
-    if (script.IsEmpty()) {
-        std::cerr << "Error: unable to run " << inputFile << std::endl;
-    } else {
-        if (debug)
-            v8::Debug::EnableAgent(inputFile, 5858, true);
+    if (syntax) {
+        const char* dumper = "system.print(JSON.stringify(Reflect.parse(code), undefined, 4))";
+        context->Global()->Set(String::New("code"), code);
+        Handle<Script> script = Script::Compile(String::New(dumper));
         script->Run();
+    } else {
+        Handle<Script> script = Script::Compile(code);
+        if (script.IsEmpty()) {
+            std::cerr << "Error: unable to run " << inputFile << std::endl;
+        } else {
+            if (debug)
+                v8::Debug::EnableAgent(inputFile, 5858, true);
+            script->Run();
+        }
     }
 
     return 0;
