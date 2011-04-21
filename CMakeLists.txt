@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 2.6)
 
 project(HammerJS)
 
+# FIXME: this should detect 64-bit vs 32-bit architecture instead
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(HAMMERJS_ARCH "x64")
+else()
+    set(HAMMERJS_ARCH "ia32")
+endif()
+
 add_subdirectory(v8)
 add_subdirectory(modules)
 
@@ -12,8 +19,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX )
 include_directories(${PROJECT_SOURCE_DIR}/v8/include)
 add_executable(hammerjs hammerjs.cpp)
 
-# FIXME: this should 64-bit vs 32-bit architecture instead
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(${HAMMERJS_ARCH} MATCHES "x64")
     set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m64" LINK_FLAGS "-m64")
 else()
     set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
