@@ -98,6 +98,7 @@ class RegExpMacroAssemblerIA32: public NativeRegExpMacroAssembler {
                             StackCheckFlag check_stack_limit);
   virtual void ReadCurrentPositionFromRegister(int reg);
   virtual void ReadStackPointerFromRegister(int reg);
+  virtual void SetCurrentPositionFromEnd(int by);
   virtual void SetRegister(int register_index, int to);
   virtual void Succeed();
   virtual void WriteCurrentPositionToRegister(int reg, int cp_offset);
@@ -125,6 +126,7 @@ class RegExpMacroAssemblerIA32: public NativeRegExpMacroAssembler {
   static const int kRegisterOutput = kInputEnd + kPointerSize;
   static const int kStackHighEnd = kRegisterOutput + kPointerSize;
   static const int kDirectCall = kStackHighEnd + kPointerSize;
+  static const int kIsolate = kDirectCall + kPointerSize;
   // Below the frame pointer - local stack variables.
   // When adding local variables remember to push space for them in
   // the frame in GetCode.

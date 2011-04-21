@@ -1,4 +1,4 @@
-// Copyright 2008 the V8 project authors. All rights reserved.
+// Copyright 2011 the V8 project authors. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -28,7 +28,8 @@
 #ifndef V8_DATEPARSER_H_
 #define V8_DATEPARSER_H_
 
-#include "scanner.h"
+#include "char-predicates-inl.h"
+#include "scanner-base.h"
 
 namespace v8 {
 namespace internal {
@@ -48,7 +49,7 @@ class DateParser : public AllStatic {
   // [7]: UTC offset in seconds, or null value if no timezone specified
   // If parsing fails, return false (content of output array is not defined).
   template <typename Char>
-  static bool Parse(Vector<Char> str, FixedArray* output);
+  static bool Parse(Vector<Char> str, FixedArray* output, UnicodeCache* cache);
 
   enum {
     YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLISECOND, UTC_OFFSET, OUTPUT_SIZE
@@ -66,10 +67,11 @@ class DateParser : public AllStatic {
   template <typename Char>
   class InputReader BASE_EMBEDDED {
    public:
-    explicit InputReader(Vector<Char> s)
+    InputReader(UnicodeCache* unicode_cache, Vector<Char> s)
         : index_(0),
           buffer_(s),
-          has_read_number_(false) {
+          has_read_number_(false),
+          unicode_cache_(unicode_cache) {
       Next();
     }
 
@@ -82,6 +84,18 @@ class DateParser : public AllStatic {
       int n;
       for (n = 0; IsAsciiDigit() && n < kMaxInt / 10 - 1; Next()) {
         n = n * 10 + ch_ - '0';
+      }
+      return n;
+    }
+
+    // Read a string of digits, take the first three or fewer as an unsigned
+    // number of milliseconds, and ignore any digits after the first three.
+    int ReadMilliseconds() {
+      has_read_number_ = true;
+      int n = 0;
+      int power;
+      for (power = 100; IsAsciiDigit(); Next(), power = power / 10) {
+        n = n + power * (ch_ - '0');
       }
       return n;
     }
@@ -99,10 +113,20 @@ class DateParser : public AllStatic {
     }
 
     // The skip methods return whether they actually skipped something.
-    bool Skip(uint32_t c) { return ch_ == c ?  (Next(), true) : false; }
+    bool Skip(uint32_t c) {
+      if (ch_ == c) {
+        Next();
+        return true;
+      }
+      return false;
+    }
 
     bool SkipWhiteSpace() {
-      return Scanner::kIsWhiteSpace.get(ch_) ? (Next(), true) : false;
+      if (unicode_cache_->IsWhiteSpace(ch_)) {
+        Next();
+        return true;
+      }
+      return false;
     }
 
     bool SkipParentheses() {
@@ -134,6 +158,7 @@ class DateParser : public AllStatic {
     Vector<Char> buffer_;
     bool has_read_number_;
     uint32_t ch_;
+    UnicodeCache* unicode_cache_;
   };
 
   enum KeywordType { INVALID, MONTH_NAME, TIME_ZONE_NAME, AM_PM };
