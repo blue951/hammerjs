@@ -28,7 +28,11 @@
 #ifndef WTF_Platform_h
 #define WTF_Platform_h
 
+#if defined(_MSC_VER) && _MSC_VER < 1600
+#include "stdint.h"
+#else
 #include <stdint.h>
+#endif
 
 typedef uint16_t UChar;
 typedef uint32_t UChar32;
