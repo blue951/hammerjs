@@ -29,7 +29,7 @@
 #define WTF_Platform_h
 
 #if defined(_MSC_VER) && _MSC_VER < 1600
-#include <wtf/stdint.h>
+#include "msvc_stdint.h"
 #else
 #include <stdint.h>
 #endif
