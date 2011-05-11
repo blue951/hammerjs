@@ -226,6 +226,12 @@ Handle<Value> convertNode(JSC::SyntaxTree::Node* n, int indent)
         return object;
     }
 
+    if (n->type() == JSC::SyntaxTree::Node::DebuggerType) {
+        Handle<Object> object = Object::New();
+        object->Set(String::New("type"), String::New("DebuggerStatement"));
+        return object;
+    }
+
     if (n->type() == JSC::SyntaxTree::Node::DotAccessType) {
         Handle<Object> property = Object::New();
         property->Set(String::New("type"), String::New("Identifier"));
