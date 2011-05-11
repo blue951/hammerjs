@@ -15,7 +15,6 @@ set(Reflect_HEADERS
     parser/SyntaxTree.h
     parser/SourceCode.h
     parser/SourceProvider.h
-    parser/TreeDumper.h
     runtime/Identifier.h
     runtime/JSGlobalData.h
     runtime/JSGlobalObjectFunctions.h
@@ -39,7 +38,6 @@ set(Reflect_SOURCES
     parser/Lexer.cpp
     parser/ParserArena.cpp
     parser/Parser.cpp
-    parser/TreeDumper.cpp
     runtime/JSGlobalObjectFunctions.cpp
     wtf/dtoa.cpp
 )

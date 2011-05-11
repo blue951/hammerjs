@@ -156,7 +156,7 @@ struct JSToken {
     JSTokenInfo m_info;
 };
 
-UString jsCreateSyntaxTree(JSGlobalData*, const SourceCode*);
+void* jsCreateSyntaxTree(JSGlobalData*, const SourceCode*);
 
 } // namespace JSC
 

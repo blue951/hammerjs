@@ -26,11 +26,12 @@
 #include "JSParser.h"
 #include "JSGlobalData.h"
 #include "Lexer.h"
+#include "SyntaxTree.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
 
-UString Parser::createSyntaxTree(JSGlobalData* globalData, const SourceCode& source, int* errLine, UString* errMsg)
+void* Parser::createSyntaxTree(JSGlobalData* globalData, const SourceCode& source, int* errLine, UString* errMsg)
 {
     m_source = &source;
     m_sourceElements = 0;
@@ -49,7 +50,7 @@ UString Parser::createSyntaxTree(JSGlobalData* globalData, const SourceCode& sou
     Lexer& lexer = *globalData->lexer;
     lexer.setCode(*m_source, m_arena);
 
-    UString tree = jsCreateSyntaxTree(globalData, m_source);
+    void* tree = jsCreateSyntaxTree(globalData, m_source);
     int lineNumber = lexer.lineNumber();
     bool lexError = lexer.sawError();
     lexer.clear();
@@ -57,14 +58,10 @@ UString Parser::createSyntaxTree(JSGlobalData* globalData, const SourceCode& sou
     if (lexError) {
         *errLine = lineNumber;
         *errMsg = "Parse error";
-        printf("Error in line %d\n", lineNumber);
         m_sourceElements = 0;
     }
 
-    m_arena.reset();
-
     return tree;
 }
-
 
 } // namespace JSC

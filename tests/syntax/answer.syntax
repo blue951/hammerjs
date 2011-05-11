@@ -14,7 +14,7 @@
                     "right": {
                         "type": "Literal",
                         "objtype": "Number",
-                        "value": "42"
+                        "value": 42
                     }
                 }
             ]

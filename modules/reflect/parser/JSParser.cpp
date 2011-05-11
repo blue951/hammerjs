@@ -32,7 +32,6 @@ using namespace JSC;
 #include "Identifier.h"
 #include "JSGlobalData.h"
 #include "SyntaxTree.h"
-#include "TreeDumper.h"
 #include <utility>
 
 using namespace std;
@@ -67,7 +66,7 @@ static const ptrdiff_t kMaxParserStackUsage = 128 * sizeof(void*) * 1024;
 class JSParser {
 public:
     JSParser(Lexer*, JSGlobalData*, SourceProvider*);
-    UString createSyntaxTree();
+    void* createSyntaxTree();
 private:
     struct AllowInOverride {
         AllowInOverride(JSParser* parser)
@@ -197,7 +196,7 @@ private:
     bool m_syntaxAlreadyValidated;
 };
 
-UString jsCreateSyntaxTree(JSGlobalData* globalData, const SourceCode* source)
+void* jsCreateSyntaxTree(JSGlobalData* globalData, const SourceCode* source)
 {
     JSParser parser(globalData->lexer, globalData, source->provider());
     return parser.createSyntaxTree();
@@ -219,20 +218,11 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, SourceProvider* provi
     m_lexer->setLastLineNumber(tokenLine());
 }
 
-UString JSParser::createSyntaxTree()
+void* JSParser::createSyntaxTree()
 {
     SyntaxTree::Builder context(m_globalData, m_lexer);
     SyntaxTree::Node* programNode = parseSourceElements<SyntaxTree::Builder>(context);
-    if (programNode) {
-        JSONTreeDumper dumper;
-        dumper.start();
-        programNode->apply(&dumper);
-        dumper.finish();
-        return dumper.result();
-    } else {
-        return UString();
-        CRASH();
-    }
+    return programNode;
 }
 
 bool JSParser::allowAutomaticSemicolon()

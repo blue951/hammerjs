@@ -14,7 +14,7 @@
                     "right": {
                         "type": "Literal",
                         "objtype": "Number",
-                        "value": "0"
+                        "value": 0
                     }
                 }
             ]
@@ -36,7 +36,7 @@
                             "right": {
                                 "type": "Literal",
                                 "objtype": "Number",
-                                "value": "2"
+                                "value": 2
                             }
                         }
                     }
@@ -52,7 +52,7 @@
                 "right": {
                     "type": "Literal",
                     "objtype": "Number",
-                    "value": "400"
+                    "value": 400
                 }
             }
         }

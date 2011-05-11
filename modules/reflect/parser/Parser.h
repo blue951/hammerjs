@@ -41,7 +41,7 @@ namespace JSC {
     class Parser : public Noncopyable {
     public:
 
-        UString createSyntaxTree(JSGlobalData* globalData, const SourceCode& m_source, int* errLine = 0, UString* errMsg = 0);
+        void* createSyntaxTree(JSGlobalData* globalData, const SourceCode& m_source, int* errLine = 0, UString* errMsg = 0);
 
         ParserArena& arena() { return m_arena; }
 
