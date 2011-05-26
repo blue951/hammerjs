@@ -170,7 +170,6 @@ endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(V8_SOURCES ${V8_SOURCES} src/platform-macos.cc)
-    add_definitions(-mmacosx-version-min=10.4)
     add_definitions(-ansi)
     add_definitions(-O3)
 endif()
@@ -193,9 +192,3 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 add_library(v8 STATIC ${V8_SOURCES})
-
-if(${HAMMERJS_ARCH} MATCHES "x64")
-    set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m64" LINK_FLAGS "-m64")
-else()
-    set_target_properties(v8 PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
-endif()
