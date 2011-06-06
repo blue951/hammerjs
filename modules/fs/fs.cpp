@@ -261,7 +261,7 @@ static Handle<Value> stream_constructor(const Arguments& args)
 
     std::fstream *data = new std::fstream;
     data->open(*name, mode);
-    if (data->bad()) {
+    if (data->fail() || data->bad()) {
         delete data;
         return ThrowException(String::New("Exception: Can't open the file"));
     }
