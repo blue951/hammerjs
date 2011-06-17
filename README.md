@@ -19,6 +19,11 @@ Alternatively copy <code>hammerjs</code> executable to some directory in the PAT
 
 For more detailed instructions, see the INSTALL file.
 
+**Tips**:
+
+* Runs <code>make -j4</code> to build in parallel, especially on multi-core machines.
+* <code>strip hammerjs</code> reduces the executable file size (for deployment).
+
 # Quick Start
 
 The typical usage is:
