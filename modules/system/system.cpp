@@ -23,9 +23,19 @@
 
 #include <v8.h>
 
+#if defined(WIN32) || defined(_WIN32)
+#define HAMMERJS_OS_WINDOWS
+#endif
+
 #include <iostream>
 
 #include <stdlib.h>
+
+#ifdef HAMMERJS_OS_WINDOWS
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 using namespace v8;
 
@@ -74,7 +84,24 @@ static Handle<Value> system_print(const Arguments& args)
     return Undefined();
 }
 
+static Handle<Value> system_sleep(const Arguments& args)
+{
+    HandleScope handle_scope;
 
+    if (args.Length() != 1)
+        return ThrowException(String::New("Exception: function system.sleep() accepts 1 argument"));
+
+    long ms = args[0]->NumberValue() * 1000.0;
+    if (ms > 0) {
+#ifdef HAMMERJS_OS_WINDOWS
+        ::Sleep(ms);
+#else
+        usleep(1000 * ms);
+#endif
+    }
+
+    return Undefined();
+}
 
 void setup_system(Handle<Object> object, Handle<Array> args)
 {
@@ -84,6 +111,7 @@ void setup_system(Handle<Object> object, Handle<Array> args)
     systemObject->Set(String::New("execute"), FunctionTemplate::New(system_execute)->GetFunction());
     systemObject->Set(String::New("exit"), FunctionTemplate::New(system_exit)->GetFunction());
     systemObject->Set(String::New("print"), FunctionTemplate::New(system_print)->GetFunction());
+    systemObject->Set(String::New("sleep"), FunctionTemplate::New(system_sleep)->GetFunction());
 
     object->Set(String::New("system"), systemObject->GetFunction());
 }

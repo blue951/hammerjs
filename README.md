@@ -70,6 +70,14 @@ Example:
   externally. This is useful to transfer the control to another
   shell or utility.
 
+* sleep(sec) blocks the execution for the specified duration (in
+  seconds).
+
+Example:
+
+    system.print('Pause for a moment...');
+    system.sleep(0.3);
+
 'system' object has the following property:
 
 * args, an array of string which contain all the arguments passed when
